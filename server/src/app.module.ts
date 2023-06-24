@@ -1,17 +1,19 @@
+import { classes } from '@automapper/classes';
+import { CamelCaseNamingConvention } from '@automapper/core';
+import { AutomapperModule } from '@automapper/nestjs';
+import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appSettings } from './configs/appsettings';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
-import { AutomapperModule } from '@automapper/nestjs';
-import { classes } from '@automapper/classes';
-import { CamelCaseNamingConvention } from '@automapper/core';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
+        CacheModule.register(),
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
         MongooseModule.forRoot(appSettings.mongoose.dbConn, {

@@ -24,7 +24,7 @@ async function bootstrap() {
         exclude: ['auth/([^\\s]+)', 'cpanel/([^\\s]+)'],
     };
 
-    app.setGlobalPrefix('api', routeExclude);
+    app.setGlobalPrefix('', routeExclude);
 
     app.enableCors();
 
@@ -67,9 +67,10 @@ async function bootstrap() {
             .build();
 
         const document = SwaggerModule.createDocument(app, config);
-        SwaggerModule.setup('swagger', app, document);
+        SwaggerModule.setup('docs', app, document);
     }
 
+    console.log(`Application running at http://localhost:${appSettings.port}`);
     await app.listen(appSettings.port);
 }
 bootstrap();
