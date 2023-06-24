@@ -5,7 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 import passport from 'passport';
 import { join } from 'path';
 import { AppModule } from './app.module';
@@ -23,6 +23,7 @@ async function bootstrap() {
     const routeExclude: GlobalPrefixOptions = {
         exclude: ['auth/([^\\s]+)', 'cpanel/([^\\s]+)'],
     };
+
     app.setGlobalPrefix('api', routeExclude);
 
     app.enableCors();
@@ -33,7 +34,8 @@ async function bootstrap() {
         new TransformInterceptor(),
     );
 
-    const mongoUrl = `${appSettings.mongoose.dbConn}/${appSettings.mongoose.dbName}`;
+    const mongoUrl = `${appSettings.mongoose.dbConn}/${appSettings.mongoose.dbName}?authSource=admin`;
+
     const refreshTokenExpireMillisecond =
         appSettings.jwt.refreshExpireIn * 1000;
     const minuteMillisecond = 60 * 1000;
@@ -57,7 +59,7 @@ async function bootstrap() {
         new ValidationPipe({ transform: true, whitelist: false }), // temp
     );
 
-    if (_.isEqual(process.env.DEVELOPMENT, 'true')) {
+    if (isEqual(process.env.DEVELOPMENT, 'true')) {
         const config = new DocumentBuilder()
             .setTitle('Hospital Management Server')
             .setDescription('The Hospital API description')
