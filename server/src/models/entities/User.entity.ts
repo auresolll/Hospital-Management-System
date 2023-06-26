@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { Base } from './Base.entity';
+import { Role } from './Role.entity';
 
 @Schema({ timestamps: true })
 export class User {
@@ -33,6 +34,9 @@ export class User {
 
     @Prop({ type: Types.ObjectId, ref: Base.name })
     base: Base;
+
+    @Prop({ type: Types.ObjectId, ref: Role.name })
+    role: Role;
 
     @Prop({ required: false })
     address: string;
