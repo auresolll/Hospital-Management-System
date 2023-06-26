@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import compression from 'compression';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import { isEqual } from 'lodash';
@@ -41,6 +42,12 @@ async function bootstrap() {
         }),
     );
 
+    app.use(
+        compression({
+            level: 6,
+            threshold: 100 * 1000,
+        }),
+    );
     app.use(passport.initialize());
     app.use(passport.session());
     app.useGlobalPipes(
