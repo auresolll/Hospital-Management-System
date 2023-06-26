@@ -2,7 +2,9 @@ import {
     BadRequestException,
     Injectable,
     NotFoundException,
+    UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { isEmpty } from 'lodash';
@@ -15,7 +17,10 @@ import { SignInAuthenticationDto } from './dto/signIn-authentication.dto';
 
 @Injectable()
 export class AuthenticationService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+    constructor(
+        @InjectModel(User.name) private userModel: Model<User>,
+        private jwtService: JwtService,
+    ) {}
 
     async registerLocal(
         createAuthenticationLocalDto: CreateAuthenticationLocalDto,
@@ -23,9 +28,11 @@ export class AuthenticationService {
         const { username } = createAuthenticationLocalDto;
         const isExits = await this.userModel.findOne({ name: username });
         if (!isEmpty(isExits))
-            throw new BadRequestException(`Tài khoản đã tồn tại! #${username}`);
+            throw new UnauthorizedException(
+                `Tài khoản đã tồn tại! #${username}`,
+            );
 
-        const userInfo = this.userModel.create({
+        const userInfo = await this.userModel.create({
             ...createAuthenticationLocalDto,
             password: await bcrypt.hash(
                 createAuthenticationLocalDto.password,
@@ -34,19 +41,41 @@ export class AuthenticationService {
             code: generateCode(),
         });
 
-        return userInfo;
+        return {
+            id: userInfo.id,
+        };
     }
 
     async signInLocal(signInAuthenticationDto: SignInAuthenticationDto) {
-        const { username, password } = signInAuthenticationDto;
-        const isExits = await this.userModel.findOne({ name: username });
-        if (isEmpty(isExits))
+        const { username } = signInAuthenticationDto;
+        const user = await this.userModel
+            .findOne({ name: username })
+            .populate('role');
+
+        if (isEmpty(user))
             throw new NotFoundException(
                 `Tài khoản không tồn tại! #${username}`,
             );
 
-        const isMatch = await bcrypt.compare(password, isExits.password);
+        const isMatch = await bcrypt.compare(
+            signInAuthenticationDto.password,
+            user.password,
+        );
         if (!isMatch)
-            throw new BadRequestException(`Mật khẩu sai! #${username}`);
+            throw new UnauthorizedException(`Mật khẩu sai! #${username}`);
+
+        const payload = {
+            sub: user.id,
+            code: user.code,
+            name: user.name,
+            country: user.country,
+            phone: user.phone,
+            gender: user.gender,
+            username: user.username,
+        };
+
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+        };
     }
 }

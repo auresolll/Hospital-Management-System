@@ -1,5 +1,13 @@
-import { Controller, Post, Query } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Query,
+    Request,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { AuthenticationService } from './authentication.service';
 import { CreateAuthenticationLocalDto } from './dto/create-authentication.dto';
 import { SignInAuthenticationDto } from './dto/signIn-authentication.dto';
