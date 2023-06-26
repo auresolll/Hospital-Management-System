@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 import { Gender } from './../../../constants/enums';
 
-export class CreateAuthenticationDto {}
 export class CreateAuthenticationLocalDto {
     @ApiProperty({ required: true, default: 'Test' })
     @IsOptional()
