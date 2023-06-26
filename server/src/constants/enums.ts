@@ -48,3 +48,9 @@ export enum Color {
     UNCHECKED = '#E9ECEF',
     PROBLEM = '#FF4848',
 }
+
+export enum Gender {
+    MALE = 'MALE',
+    FEMALE = 'FEMALE',
+    THIRD = 'THIRD',
+}

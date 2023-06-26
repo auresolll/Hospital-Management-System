@@ -10,9 +10,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appSettings } from './configs/appsettings';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
+import { AuthenticationModule } from './apis/authentication/authentication.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
         CacheModule.register(),
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
@@ -27,6 +30,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
                 namingConventions: new CamelCaseNamingConvention(),
             },
         ]),
+        AuthenticationModule,
     ],
     controllers: [AppController],
     providers: [AppService],

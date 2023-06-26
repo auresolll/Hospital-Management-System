@@ -47,6 +47,7 @@
         "@types/lodash": "^4.14.185",
         "@types/node-fetch": "^2.6.2",
         "atob": "^2.1.2",
+        "bcrypt": "^5.1.0",
         "bcryptjs": "^2.4.3",
         "bluebird": "^3.7.2",
         "buffer": "^6.0.3",
