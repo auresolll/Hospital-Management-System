@@ -3,6 +3,7 @@ import 'dotenv/config';
 export const appSettings = {
     port: process.env.PORT,
     development: process.env.DEVELOPMENT,
+    saltOrRounds: Number(process.env.SALTORROUNDS),
     jwt: {
         secret: process.env.JWT_SECRET,
         issuer: process.env.ISSUER,
