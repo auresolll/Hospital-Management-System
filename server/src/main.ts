@@ -59,6 +59,7 @@ async function bootstrap() {
             .setTitle('Hospital Management Server')
             .setDescription('The Hospital API description')
             .setVersion('1.0')
+            .addBearerAuth()
             .build();
 
         const document = SwaggerModule.createDocument(app, config);
