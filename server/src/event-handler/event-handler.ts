@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
-import { EventConstants } from 'src/constants/enums';
 
 @Injectable()
 export class EventHandlers {

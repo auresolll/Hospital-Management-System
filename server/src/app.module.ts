@@ -1,6 +1,3 @@
-import { classes } from '@automapper/classes';
-import { CamelCaseNamingConvention } from '@automapper/core';
-import { AutomapperModule } from '@automapper/nestjs';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
