@@ -1,7 +1,7 @@
+import { Base } from './../../models/entities/Base.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Base } from './entities/base.entity';
 
 @Injectable()
 export class BaseService {

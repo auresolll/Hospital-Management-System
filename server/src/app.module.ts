@@ -3,15 +3,16 @@ import { CamelCaseNamingConvention } from '@automapper/core';
 import { AutomapperModule } from '@automapper/nestjs';
 import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AuthenticationModule } from './apis/authentication/authentication.module';
+import { BaseModule } from './apis/base/base.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appSettings } from './configs/appsettings';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
-import { AuthenticationModule } from './apis/authentication/authentication.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
@@ -23,14 +24,15 @@ import { ConfigModule } from '@nestjs/config';
             authSource: 'admin',
             dbName: appSettings.mongoose.dbName,
         }),
-        AutomapperModule.forRoot([
-            {
-                name: 'classes',
-                strategyInitializer: classes(),
-                namingConventions: new CamelCaseNamingConvention(),
-            },
-        ]),
+        // AutomapperModule.forRoot([
+        //     {
+        //         name: 'classes',
+        //         strategyInitializer: classes(),
+        //         namingConventions: new CamelCaseNamingConvention(),
+        //     },
+        // ]),
         AuthenticationModule,
+        BaseModule,
     ],
     controllers: [AppController],
     providers: [AppService],
