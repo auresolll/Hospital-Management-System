@@ -3,9 +3,26 @@ export enum Status {
     ACTIVE = 'ACTIVE',
 }
 
-export enum StatusRoom {
-    CHECKED = 'CHECKED',
-    UNCHECKED = 'UNCHECKED',
+// export enum PatientType {
+//     CHECKUP = 'CHECKUP',
+//     REEXAMINATION = 'RE-EXAMINATION',
+//     EMERGENCY = 'EMERGENCY',
+//     SURGICAL = 'SURGICAL',
+// }
+
+export enum PatientTest {
+    CHECKUP = 'CHECKUP',
+    RE_EXAMINATION = 'RE_EXAMINATION',
+}
+
+export enum RoomType {
+    EMERGENCY = 'EMERGENCY',
+    CONSULTING_ROOM = 'CONSULTING_ROOM',
+    DAY_ROOM = 'DAY_ROOM',
+    DELIVERY_ROOM = 'DELIVERY_ROOM',
+    DEPENSARY = 'DEPENSARY',
+    PHARMACY = 'PHARMACY',
+    OPERATING_ROOM = 'OPERATING_ROOM',
 }
 
 export enum ReportType {
@@ -27,11 +44,6 @@ export enum UserType {
     ADMIN = 'ADMIN',
 }
 
-export enum TypeMetadata {
-    PLACE = 'PLACE',
-    FLOOR = 'FLOOR',
-}
-
 export enum EventConstants {
     CACHING_REPORT = 'CACHING_REPORT',
     CACHING_USER_REPORT = 'CACHING_USER_REPORT',
@@ -41,12 +53,6 @@ export enum TypeAchievement {
     DAY = 'DAY',
     MONTH = 'MONTH',
     YEAR = 'YEAR',
-}
-
-export enum Color {
-    CHECKED = '#00FFAB',
-    UNCHECKED = '#E9ECEF',
-    PROBLEM = '#FF4848',
 }
 
 export enum Gender {
