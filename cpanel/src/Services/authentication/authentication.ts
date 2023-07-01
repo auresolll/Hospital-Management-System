@@ -23,7 +23,9 @@ export class AuthenticationService implements IAuthentication {
 
       localStorage.setItem(
         "access_token",
-        JSON.stringify(result.data.access_token)
+        JSON.stringify({
+          token: result.data.access_token,
+        })
       );
     } catch (error) {
       console.error(error);
@@ -41,5 +43,12 @@ export class AuthenticationService implements IAuthentication {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  public getAccessToken(): string {
+    const access_token = JSON.parse(
+      localStorage.getItem("access_token") ?? "{}"
+    );
+    return access_token["token"];
   }
 }
