@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { appSettings } from 'src/configs/appsettings';
+import { Auth, google } from 'googleapis';
 import { Strategy } from 'passport-google-verify-token';
-import { google, Auth } from 'googleapis';
+import { appSettings } from './../configs/appsettings';
 
 @Injectable()
 export class GoogleVerifyIdTokenStrategy extends PassportStrategy(
