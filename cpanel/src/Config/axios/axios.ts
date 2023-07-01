@@ -1,10 +1,18 @@
 import axios from "axios";
-const baseURL = "http://localhost:8080/";
+
+const isTrueSet =
+  String(import.meta.env.VITE_PRODUCTION).toLowerCase() === "true";
+
+const baseURL = isTrueSet
+  ? import.meta.env.VITE_SERVER_URL
+  : "http://localhost:5555/";
+
+const access_token = JSON.parse(localStorage.getItem("access_token") ?? "{}");
 
 const server = axios.create({
   baseURL: `${baseURL}`,
   headers: {
-    Authorization: "Bearer ",
+    Authorization: `Bearer ${access_token["token"]}`,
   },
 });
 
