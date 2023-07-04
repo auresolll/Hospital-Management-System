@@ -63,6 +63,21 @@ export class AuthenticationService {
         if (!isMatch)
             throw new UnauthorizedException(`Mật khẩu sai! #${username}`);
 
+        return {
+            status: true,
+        };
+    }
+
+    async generateJwt(username: string) {
+        const user = await this.userModel
+            .findOne({ name: username })
+            .populate('role');
+
+        if (isEmpty(user))
+            throw new NotFoundException(
+                `Tài khoản không tồn tại! #${username}`,
+            );
+
         const payload = {
             sub: user.id,
             code: user.code,
