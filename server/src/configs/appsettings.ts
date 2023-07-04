@@ -27,4 +27,18 @@ export const appSettings = {
     report: {
         expireIn: Number(process.env.EXPIRE_IN_REPORT),
     },
+    twilio: {
+        accountSid: process.env.TWILIO_ACCOUNT_SID,
+        authToken: process.env.TWILIO_AUTH_TOKEN,
+    },
+    mail: {
+        host: process.env.MAIL_HOST,
+        port: Number(process.env.MAIL_PORT),
+        secure: process.env.MAIL_SECURE === 'true' ? true : false,
+        auth: {
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASSWORD,
+        },
+        from: process.env.MAIL_FROM,
+    },
 };

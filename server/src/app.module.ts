@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthenticationModule } from './apis/authentication/authentication.module';
 import { BaseModule } from './apis/base/base.module';
+import { VerifiedModule } from './apis/verified/verified.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appSettings } from './configs/appsettings';
@@ -14,7 +15,9 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
-        CacheModule.register(),
+        CacheModule.register({
+            isGlobal: true,
+        }),
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
         MongooseModule.forRoot(appSettings.mongoose.dbConn, {
@@ -30,6 +33,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
         // ]),
         AuthenticationModule,
         BaseModule,
+        VerifiedModule,
     ],
     controllers: [AppController],
     providers: [AppService],

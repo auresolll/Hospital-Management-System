@@ -1,4 +1,4 @@
-import { Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { CreateAuthenticationLocalDto } from './dto/create-authentication.dto';
@@ -12,12 +12,12 @@ export class AuthenticationController {
     ) {}
 
     @Post('register-local')
-    registerLocal(@Query() query: CreateAuthenticationLocalDto) {
+    registerLocal(@Body() query: CreateAuthenticationLocalDto) {
         return this.authenticationService.registerLocal(query);
     }
 
     @Post('signIn-local')
-    signInLocal(@Query() query: SignInAuthenticationDto) {
+    signInLocal(@Body() query: SignInAuthenticationDto) {
         return this.authenticationService.signInLocal(query);
     }
 }
