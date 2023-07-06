@@ -61,7 +61,9 @@ export class AuthenticationService {
             user.password,
         );
         if (!isMatch)
-            throw new UnauthorizedException(`Mật khẩu sai! #${username}`);
+            throw new UnauthorizedException(
+                `Vui lòng kiểm tra lại mật khẩu tài khoản! #${username}`,
+            );
 
         return {
             status: true,
