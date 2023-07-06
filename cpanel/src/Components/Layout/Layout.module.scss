@@ -6,6 +6,7 @@
     height: 100%;
     max-width: 240px;
     width: 100%;
+    border-right: 1px solid #e4e7e6;
     overflow-x: auto;
 
     &::-webkit-scrollbar {
@@ -92,7 +93,42 @@
   &__Section {
     height: 100%;
     width: 100%;
-    background-color: red;
+    // background-color: red;
+
+    &__Search {
+      height: 24px;
+      padding: 26px 121px;
+      border-bottom: 1px solid #e4e7e6;
+      form {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        input {
+          outline: none;
+          border: none;
+          min-width: 400px;
+          color: #a3a5a9;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 24px;
+          letter-spacing: 0.16px;
+          &::placeholder {
+            color: #a3a5a9;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 24px;
+            letter-spacing: 0.16px;
+          }
+        }
+      }
+    }
+
+    &__Content {
+      padding: 36px 81px;
+    }
   }
 
   &__Active {
