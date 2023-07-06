@@ -1,6 +1,6 @@
 import server from "../../Config/axios/axios";
 import { IAuthentication } from "./authentication.interface";
-import { typeRegister, typeSign } from "./authentication.type";
+import { typeCode, typeRegister, typeSign } from "./authentication.type";
 
 export class AuthenticationService implements IAuthentication {
   private static instance: AuthenticationService;
@@ -14,21 +14,12 @@ export class AuthenticationService implements IAuthentication {
     return AuthenticationService.instance;
   }
 
-  public async signIn(user: typeSign): Promise<void> {
+  public async signIn(user: typeSign) {
     try {
       const request = await server.post("authentication/signIn-local", user);
-      const result = await request.data;
-
-      if (result.statusCode !== 200) return;
-
-      localStorage.setItem(
-        "access_token",
-        JSON.stringify({
-          token: result.data.access_token,
-        })
-      );
-    } catch (error) {
-      console.error(error);
+      return request.data;
+    } catch (error: any) {
+      return error.response.data;
     }
   }
 
@@ -42,6 +33,38 @@ export class AuthenticationService implements IAuthentication {
       return result.data;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  public async sendVerifiedCodeOTP(type: "Phone" | "Mail", username: string) {
+    if (type === "Phone") {
+      const request = await server.post(
+        `verified/phone/verify?username=${username}`
+      );
+      return request.data;
+    } else {
+      const request = await server.post(
+        `verified/mail/verify?username=${username}`
+      );
+      return request.data;
+    }
+  }
+
+  public async verifiedCodeOTP(query: typeCode) {
+    try {
+      const request = await server.post(`verified/phone/verify/check`, query);
+      const result = await request.data;
+      if (result.data.status) {
+        localStorage.setItem(
+          "access_token",
+          JSON.stringify({
+            token: result.data.access_token,
+          })
+        );
+      }
+      return result.data;
+    } catch (error: any) {
+      return error.response.data;
     }
   }
 
