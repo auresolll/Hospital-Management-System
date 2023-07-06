@@ -10,3 +10,8 @@ export type typeRegister = {
   gender: string;
   password: string;
 };
+
+export type typeCode = {
+  code: string;
+  username: string;
+};
