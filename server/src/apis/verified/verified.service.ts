@@ -45,10 +45,21 @@ export class VerifiedService {
 
         if (isEqual(code, codeCache)) {
             await this.cacheManager.del(`keyCode:#${user.id}`);
-            return this.authenticationService.generateJwt(user.username);
+            const access_token = await this.authenticationService.generateJwt(
+                user.username,
+            );
+            return {
+                ...access_token,
+                status: true,
+                message: 'Đăng nhập thành công!',
+            };
         }
 
-        return false;
+        return {
+            access_token: null,
+            status: false,
+            message: 'Mã xác thực không chính xác!',
+        };
     }
 
     async sendVerificationCodeToMail(user: any, code: string) {
