@@ -1,1 +1,150 @@
-.Home {}
+.Home {
+  &__Heading {
+    h1 {
+      color: #000;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 24px;
+      letter-spacing: 0.24px;
+      margin-bottom: 0;
+    }
+
+    p {
+      margin-top: 8px;
+      color: #a3a5a9;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 24px;
+      letter-spacing: 0.14px;
+      margin-bottom: 25px;
+    }
+  }
+
+  &__Overviews {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.1875rem;
+
+    &__Block {
+      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+      border-radius: 0.5625rem;
+      background-color: white;
+      display: flex;
+      max-height: 14.4em;
+      max-width: 19.1875rem;
+      padding: 1.75rem 1.375rem;
+      flex-direction: column;
+      gap: 1.625rem;
+
+      &__Heading {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        width: 100%;
+
+        p {
+          color: #878b8d;
+          font-size: 0.875rem;
+          margin: 0;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 1.5rem;
+          letter-spacing: 0.00875rem;
+        }
+      }
+
+      &__Values {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        color: #000;
+
+        h3 {
+          margin: 0;
+          color: #000;
+          font-size: 2rem;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 1.5rem;
+          letter-spacing: 0.02rem;
+        }
+        p {
+          margin: 0;
+          border-radius: 1.25rem;
+          background: #d9f7e8;
+          padding: 0rem 1rem;
+          color: #2b7e74;
+          font-size: 0.75rem;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 1.5rem;
+          letter-spacing: 0.0075rem;
+        }
+      }
+
+      &__Desc {
+        color: rgba(135, 139, 141, 0.8);
+        font-size: 0.775rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem;
+        letter-spacing: 0.00875rem;
+
+        strong {
+          color: rgba(135, 139, 141, 1);
+        }
+      }
+    }
+    &__Block:first-child {
+      border-radius: 0.5625rem;
+      background: #2f8a80;
+      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+
+      .Home__Overviews__Block__Heading {
+        p {
+          color: #c4f1ec !important;
+        }
+      }
+      .Home__Overviews__Block__Values {
+        h3 {
+          color: #fff;
+          font-size: 2rem;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 1.5rem;
+          letter-spacing: 0.02rem;
+          margin: 0;
+        }
+
+        p {
+          margin: 0;
+          color: #fff6f6;
+          font-size: 0.75rem;
+          font-style: normal;
+          padding: 0rem 1rem;
+          border-radius: 1.25rem;
+          background: #70a7a0;
+          font-weight: 600;
+          line-height: 1.5rem;
+          letter-spacing: 0.0075rem;
+        }
+      }
+
+      .Home__Overviews__Block__Desc {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.775rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem;
+        letter-spacing: 0.00875rem;
+
+        strong {
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+    }
+  }
+}

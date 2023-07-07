@@ -94,4 +94,8 @@ export class AuthenticationService {
             access_token: await this.jwtService.signAsync(payload),
         };
     }
+
+    async getUser(username: string) {
+        return this.userModel.findOne({ username }).populate('role');
+    }
 }
