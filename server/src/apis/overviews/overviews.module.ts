@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Doctor, DoctorSchema } from './../../models/entities/Doctor.entity';
+import {
+    Employee,
+    EmployeeSchema,
+} from './../../models/entities/Employee.entity';
 import {
     Inpatient,
     InpatientSchema,
@@ -23,6 +28,14 @@ import { OverviewsService } from './overviews.service';
             {
                 name: Lab.name,
                 schema: LabSchema,
+            },
+            {
+                name: Doctor.name,
+                schema: DoctorSchema,
+            },
+            {
+                name: Employee.name,
+                schema: EmployeeSchema,
             },
         ]),
     ],

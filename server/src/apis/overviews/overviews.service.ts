@@ -1,3 +1,5 @@
+import { Employee } from './../../models/entities/Employee.entity';
+import { Doctor } from './../../models/entities/Doctor.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import moment from 'moment';
@@ -10,8 +12,10 @@ import { Patient } from './../../models/entities/Patient.entity';
 export class OverviewsService {
     constructor(
         @InjectModel(Patient.name) private patientModel: Model<Patient>,
-        @InjectModel(Inpatient.name) private InpatientModel: Model<Inpatient>,
-        @InjectModel(Lab.name) private LabModel: Model<Lab>,
+        @InjectModel(Inpatient.name) private inPatientModel: Model<Inpatient>,
+        @InjectModel(Doctor.name) private doctorModel: Model<Doctor>,
+        @InjectModel(Employee.name) private employeeModel: Model<Employee>,
+        @InjectModel(Lab.name) private labModel: Model<Lab>,
     ) {}
 
     async getOverviews() {
@@ -37,6 +41,56 @@ export class OverviewsService {
                 previousThirdDay,
             ),
         ]);
+    }
+
+    async getAnalyticsToRole() {
+        return Promise.all([
+            this.doctorModel.aggregate([
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: '%Y-%m',
+                                date: '$createdAt',
+                            },
+                        },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+            this.patientModel.aggregate([
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: '%Y-%m',
+                                date: '$createdAt',
+                            },
+                        },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+            this.employeeModel.aggregate([
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: '%Y-%m',
+                                date: '$createdAt',
+                            },
+                        },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+        ]).then(([countDoctors, countPatients, countEmployee]) => {
+            return {
+                countDoctors,
+                countPatients,
+                countEmployee,
+            };
+        });
     }
 
     async getOverviewPatients(
@@ -85,19 +139,19 @@ export class OverviewsService {
         previousThirdDay: moment.Moment,
     ) {
         return Promise.all([
-            this.InpatientModel.count({
+            this.inPatientModel.count({
                 createdAt: {
                     $gte: previousSecondDay,
                     $lte: currentDay,
                 },
             }),
-            this.InpatientModel.count({
+            this.inPatientModel.count({
                 createdAt: {
                     $gte: previousThirdDay,
                     $lte: previousSecondDay,
                 },
             }),
-            this.InpatientModel.count({
+            this.inPatientModel.count({
                 createdAt: {
                     $gte: previousThirdDay,
                     $lte: currentDay,
@@ -127,21 +181,21 @@ export class OverviewsService {
         previousThirdDay: moment.Moment,
     ) {
         return Promise.all([
-            this.LabModel.count({
+            this.labModel.count({
                 category: 'PHẪU THUẬT',
                 createdAt: {
                     $gte: previousSecondDay,
                     $lte: currentDay,
                 },
             }),
-            this.LabModel.count({
+            this.labModel.count({
                 category: 'PHẪU THUẬT',
                 createdAt: {
                     $gte: previousThirdDay,
                     $lte: previousSecondDay,
                 },
             }),
-            this.LabModel.count({
+            this.labModel.count({
                 category: 'PHẪU THUẬT',
                 createdAt: {
                     $gte: previousThirdDay,

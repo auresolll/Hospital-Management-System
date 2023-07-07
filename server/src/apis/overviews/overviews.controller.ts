@@ -30,4 +30,20 @@ export class OverviewsController {
         }
         return JSON.parse(value);
     }
+
+    @Get('analytics-to-role')
+    async findAnalyticsToRole() {
+        const value: string = await this.cacheManager.get('getOverviews');
+        if (!value) {
+            const minuteMillisecond = 3 * 60 * 1000;
+            const response = await this.overviewsService.getAnalyticsToRole();
+            await this.cacheManager.set(
+                'getOverviews',
+                JSON.stringify(response),
+                minuteMillisecond,
+            );
+            return response;
+        }
+        return JSON.parse(value);
+    }
 }
