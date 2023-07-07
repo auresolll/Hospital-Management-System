@@ -12,7 +12,7 @@ import { Inpatient } from './../../models/entities/Inpatient.entity';
 import { Lab } from './../../models/entities/Lab.entity';
 import { Patient } from './../../models/entities/Patient.entity';
 import { OverviewAnalyticDto } from './dto/overviews.dto';
-import { UserType } from 'src/constants/enums';
+import { UserType } from './../../constants/enums';
 
 @Injectable()
 export class OverviewsService {
