@@ -11,6 +11,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appSettings } from './configs/appsettings';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
+import { OverviewsModule } from './apis/overviews/overviews.module';
 
 @Module({
     imports: [
@@ -34,6 +35,7 @@ import { LoggingMiddleware } from './middlewares/logging.middleware';
         AuthenticationModule,
         BaseModule,
         VerifiedModule,
+        OverviewsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
