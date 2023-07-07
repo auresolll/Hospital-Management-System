@@ -61,6 +61,12 @@ export class AuthenticationService implements IAuthentication {
             token: result.data.access_token,
           })
         );
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify({
+            token: result.data.userInfo,
+          })
+        );
       }
       return result.data;
     } catch (error: any) {
