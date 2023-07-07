@@ -45,14 +45,17 @@ export class VerifiedService {
 
         if (isEqual(code, codeCache)) {
             await this.cacheManager.del(`keyCode:#${user.id}`);
-            const access_token = await this.authenticationService.generateJwt(
-                user.username,
-            );
-            return {
-                ...access_token,
-                status: true,
-                message: 'Đăng nhập thành công!',
-            };
+            return Promise.all([
+                this.authenticationService.generateJwt(user.username),
+                this.authenticationService.getUser(user.username),
+            ]).then(([access_token, userInfo]) => {
+                return {
+                    ...access_token,
+                    userInfo: userInfo,
+                    status: true,
+                    message: 'Đăng nhập thành công!',
+                };
+            });
         }
 
         return {
