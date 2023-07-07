@@ -1,12 +1,18 @@
 import { Employee } from './../../models/entities/Employee.entity';
 import { Doctor } from './../../models/entities/Doctor.entity';
-import { Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import moment from 'moment';
 import { Model } from 'mongoose';
 import { Inpatient } from './../../models/entities/Inpatient.entity';
 import { Lab } from './../../models/entities/Lab.entity';
 import { Patient } from './../../models/entities/Patient.entity';
+import { OverviewAnalyticDto } from './dto/overviews.dto';
+import { UserType } from 'src/constants/enums';
 
 @Injectable()
 export class OverviewsService {
@@ -43,54 +49,56 @@ export class OverviewsService {
         ]);
     }
 
-    async getAnalyticsToRole() {
-        return Promise.all([
-            this.doctorModel.aggregate([
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: '%Y-%m',
-                                date: '$createdAt',
+    async getAnalyticsByRole(role: OverviewAnalyticDto) {
+        switch (role.userType) {
+            case UserType.PATIENT:
+                const countPatients = await this.patientModel.aggregate([
+                    {
+                        $group: {
+                            _id: {
+                                $dateToString: {
+                                    format: '%Y-%m',
+                                    date: '$createdAt',
+                                },
                             },
+                            count: { $sum: 1 },
                         },
-                        count: { $sum: 1 },
                     },
-                },
-            ]),
-            this.patientModel.aggregate([
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: '%Y-%m',
-                                date: '$createdAt',
+                ]);
+                return countPatients;
+            case UserType.DOCTOR:
+                const countDoctors = await this.doctorModel.aggregate([
+                    {
+                        $group: {
+                            _id: {
+                                $dateToString: {
+                                    format: '%Y-%m',
+                                    date: '$createdAt',
+                                },
                             },
+                            count: { $sum: 1 },
                         },
-                        count: { $sum: 1 },
                     },
-                },
-            ]),
-            this.employeeModel.aggregate([
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: '%Y-%m',
-                                date: '$createdAt',
+                ]);
+                return countDoctors;
+            case UserType.OPERATOR:
+                const countEmployees = await this.employeeModel.aggregate([
+                    {
+                        $group: {
+                            _id: {
+                                $dateToString: {
+                                    format: '%Y-%m',
+                                    date: '$createdAt',
+                                },
                             },
+                            count: { $sum: 1 },
                         },
-                        count: { $sum: 1 },
                     },
-                },
-            ]),
-        ]).then(([countDoctors, countPatients, countEmployee]) => {
-            return {
-                countDoctors,
-                countPatients,
-                countEmployee,
-            };
-        });
+                ]);
+                return countEmployees;
+            default:
+                throw new ForbiddenException('Access denied!');
+        }
     }
 
     async getOverviewPatients(
