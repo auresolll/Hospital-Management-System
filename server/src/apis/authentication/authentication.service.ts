@@ -72,7 +72,7 @@ export class AuthenticationService {
 
     async generateJwt(username: string) {
         const user = await this.userModel
-            .findOne({ name: username })
+            .findOne({ username })
             .populate('role');
 
         if (isEmpty(user))

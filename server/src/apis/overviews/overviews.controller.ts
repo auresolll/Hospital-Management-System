@@ -1,9 +1,10 @@
 import { JwtAuthGuard } from './../../guards/jwt-auth.guard';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Controller, Get, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { OverviewsService } from './overviews.service';
+import { OverviewAnalyticDto } from './dto/overviews.dto';
 
 @ApiTags('Overviews')
 @ApiBearerAuth()
@@ -31,14 +32,19 @@ export class OverviewsController {
         return JSON.parse(value);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('analytics-to-role')
-    async findAnalyticsToRole() {
-        const value: string = await this.cacheManager.get('getOverviews');
+    async findAnalyticsToRole(@Query() query: OverviewAnalyticDto) {
+        const value: string = await this.cacheManager.get(
+            `analytics-to-role:${query.userType}`,
+        );
         if (!value) {
             const minuteMillisecond = 3 * 60 * 1000;
-            const response = await this.overviewsService.getAnalyticsToRole();
+            const response = await this.overviewsService.getAnalyticsByRole(
+                query,
+            );
             await this.cacheManager.set(
-                'getOverviews',
+                `analytics-to-role:${query.userType}`,
                 JSON.stringify(response),
                 minuteMillisecond,
             );

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Role } from './../../decorators/role.decorator';
 import { Doctor, DoctorSchema } from './../../models/entities/Doctor.entity';
 import {
     Employee,
@@ -11,6 +12,7 @@ import {
 } from './../../models/entities/Inpatient.entity';
 import { Lab, LabSchema } from './../../models/entities/Lab.entity';
 import { Patient, PatientSchema } from './../../models/entities/Patient.entity';
+import { RoleSchema } from './../../models/entities/Role.entity';
 import { OverviewsController } from './overviews.controller';
 import { OverviewsService } from './overviews.service';
 
@@ -36,6 +38,10 @@ import { OverviewsService } from './overviews.service';
             {
                 name: Employee.name,
                 schema: EmployeeSchema,
+            },
+            {
+                name: Role.name,
+                schema: RoleSchema,
             },
         ]),
     ],

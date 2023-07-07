@@ -37,10 +37,10 @@ export enum CompletionType {
 }
 
 export enum UserType {
-    OPERATOR = 'OPERATOR',
-    TEACHER = 'TEACHER',
-    ADMINISTRATIVE_STAFF = 'ADMINISTRATIVE_STAFF',
-    MANAGER = 'MANAGER',
+    OPERATOR = 'Nhân viên',
+    DOCTOR = 'Bác sĩ',
+    PATIENT = 'Bệnh nhân',
+    HEAD_DEPARTMENT = 'Trưởng khoa',
     ADMIN = 'ADMIN',
 }
 
