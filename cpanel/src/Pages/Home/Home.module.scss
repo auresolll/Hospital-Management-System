@@ -248,11 +248,14 @@
           letter-spacing: 0.00875rem;
         }
       }
+
+      &__Visual {
+        width: 100%;
+      }
     }
 
     &__Base {
       display: flex;
-      height: 34.3125rem;
       padding: 1.75rem 1.375rem;
       flex-direction: column;
       align-items: flex-start;
@@ -261,6 +264,22 @@
       border-radius: 0.5625rem;
       background: #fff;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+
+      &__Heading {
+        display: flex;
+        gap: 0.5em;
+        align-items: center;
+        margin-bottom: 1em;
+        p {
+          color: #a3a5a9;
+          font-size: 0.875rem;
+          font-style: normal;
+          margin: 0;
+          font-weight: 700;
+          line-height: 1.5rem;
+          letter-spacing: 0.00875rem;
+        }
+      }
     }
   }
 }

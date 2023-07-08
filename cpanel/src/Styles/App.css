@@ -4,3 +4,27 @@
     margin: .5em 1em;
     color: #d91b1b;
 }
+
+.apexcharts-legend-series {
+    display: flex !important;
+    align-items: center;
+    gap: .5em;
+}
+
+.apexcharts-xaxistooltip,
+.apexcharts-yaxistooltip {
+    backdrop-filter: blur(6px) !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-color: transparent !important;
+    box-shadow: rgba(145, 158, 171, 0.24) 0px 0px 2px 0px, rgba(145, 158, 171, 0.24) -20px 20px 40px -4px !important;
+    border-radius: 10px !important;
+}
+
+.apexcharts-xaxistooltip:before,
+.apexcharts-xaxistooltip::after {
+    border: none !important;
+}
+
+.apexcharts-text {
+    font-weight: 600;
+}
