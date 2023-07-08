@@ -5,7 +5,12 @@ const LazyOverviewsAnalyticChartPatient = lazy(
 );
 
 const OverviewsAnalyticChartPatient = (
-  props: JSX.IntrinsicAttributes & { children?: React.ReactNode }
+  props: JSX.IntrinsicAttributes & {
+    children?: React.ReactNode;
+    chartLabels: string[];
+    chartData: number[];
+    other: any;
+  }
 ) => (
   <Suspense fallback={null}>
     <LazyOverviewsAnalyticChartPatient {...props} />
