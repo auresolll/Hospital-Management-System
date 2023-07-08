@@ -50,9 +50,9 @@ export class OverviewsService {
     }
 
     async getAnalyticsByRole(role: OverviewAnalyticDto) {
-        switch (role.userType) {
-            case UserType.PATIENT:
-                const countPatients = await this.patientModel.aggregate([
+        return {
+            ...(role.userType === UserType.PATIENT && {
+                result: await this.patientModel.aggregate([
                     {
                         $group: {
                             _id: {
@@ -64,10 +64,10 @@ export class OverviewsService {
                             count: { $sum: 1 },
                         },
                     },
-                ]);
-                return countPatients;
-            case UserType.DOCTOR:
-                const countDoctors = await this.doctorModel.aggregate([
+                ]),
+            }),
+            ...(role.userType === UserType.DOCTOR && {
+                result: await this.doctorModel.aggregate([
                     {
                         $group: {
                             _id: {
@@ -79,10 +79,10 @@ export class OverviewsService {
                             count: { $sum: 1 },
                         },
                     },
-                ]);
-                return countDoctors;
-            case UserType.OPERATOR:
-                const countEmployees = await this.employeeModel.aggregate([
+                ]),
+            }),
+            ...(role.userType === UserType.OPERATOR && {
+                result: await this.employeeModel.aggregate([
                     {
                         $group: {
                             _id: {
@@ -94,11 +94,9 @@ export class OverviewsService {
                             count: { $sum: 1 },
                         },
                     },
-                ]);
-                return countEmployees;
-            default:
-                throw new ForbiddenException('Access denied!');
-        }
+                ]),
+            }),
+        };
     }
 
     async getOverviewPatients(
