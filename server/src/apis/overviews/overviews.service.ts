@@ -57,7 +57,7 @@ export class OverviewsService {
                         $group: {
                             _id: {
                                 $dateToString: {
-                                    format: '%Y-%m',
+                                    format: '%Y-%m-%d',
                                     date: '$createdAt',
                                 },
                             },
@@ -72,7 +72,7 @@ export class OverviewsService {
                         $group: {
                             _id: {
                                 $dateToString: {
-                                    format: '%Y-%m',
+                                    format: '%Y-%m-%d',
                                     date: '$createdAt',
                                 },
                             },
@@ -87,7 +87,7 @@ export class OverviewsService {
                         $group: {
                             _id: {
                                 $dateToString: {
-                                    format: '%Y-%m',
+                                    format: '%Y-%m-%d',
                                     date: '$createdAt',
                                 },
                             },
