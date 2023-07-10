@@ -224,6 +224,44 @@ const Home: FC<HomeProps> = () => {
             </div>
           </div>
         </section>
+
+        <section className={styles.Home__Table}>
+          <div className={styles.Home__Analytics__Role__Heading}>
+            <img src={IconStatusupWhite} alt="IconStatusupWhite" />
+            <p>Thống kê cơ sở</p>
+          </div>
+
+          <p className={styles.Home__Table__Title}>
+            Quý 1 năm 2023 (T01 - T04)
+          </p>
+
+          <table className={styles.Home__Table__Container}>
+            <tr>
+              <th>Tên cơ sở</th>
+              <th>Số lượng bệnh nhân</th>
+              <th>Số lượng bác sĩ</th>
+              <th>Số lượng phòng bệnh</th>
+              <th>Số lượng xuất viện</th>
+              <th>Số lượng tái khám</th>
+            </tr>
+            <tr>
+              <td>HCM</td>
+              <td>6121</td>
+              <td>6121</td>
+              <td>6121</td>
+              <td>6121</td>
+              <td>6121</td>
+            </tr>
+            <tr>
+              <td>HCM</td>
+              <td>6121</td>
+              <td>6121</td>
+              <td>6121</td>
+              <td>6121</td>
+              <td>6121</td>
+            </tr>
+          </table>
+        </section>
       </div>
     </>
   );
