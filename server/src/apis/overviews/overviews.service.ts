@@ -7,12 +7,13 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import moment from 'moment';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Inpatient } from './../../models/entities/Inpatient.entity';
 import { Lab } from './../../models/entities/Lab.entity';
 import { Patient } from './../../models/entities/Patient.entity';
 import { OverviewAnalyticDto } from './dto/overviews.dto';
 import { UserType } from './../../constants/enums';
+import { isUndefined, max, size } from 'lodash';
 
 @Injectable()
 export class OverviewsService {
@@ -49,54 +50,121 @@ export class OverviewsService {
         ]);
     }
 
-    async getAnalyticsByRole(role: OverviewAnalyticDto) {
-        return {
-            ...(role.userType === UserType.PATIENT && {
-                result: await this.patientModel.aggregate([
-                    {
-                        $group: {
-                            _id: {
-                                $dateToString: {
-                                    format: '%Y-%m-%d',
-                                    date: '$createdAt',
-                                },
-                            },
-                            count: { $sum: 1 },
+    async getAnalyticsByRole(options: OverviewAnalyticDto) {
+        const resultMap = new Map();
+        resultMap.set('patients', {
+            name: 'Bệnh nhân',
+            type: 'area',
+            fill: 'gradient',
+            data: [],
+        });
+        resultMap.set('employees', {
+            name: 'Nhân viên',
+            type: 'line',
+            fill: 'solid',
+            data: [],
+        });
+        resultMap.set('doctors', {
+            name: 'Bác sĩ',
+            type: 'column',
+            fill: 'solid',
+            data: [],
+        });
+
+        const firstDayInYear = moment()
+            .year(options.year)
+            .startOf('year')
+            .toDate();
+        const lastDayInYear = moment()
+            .year(options.year)
+            .endOf('year')
+            .toDate();
+
+        const [patients, doctors, employees] = await Promise.all([
+            this.patientModel.aggregate([
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: firstDayInYear,
+                            $lte: lastDayInYear,
                         },
                     },
-                ]),
-            }),
-            ...(role.userType === UserType.DOCTOR && {
-                result: await this.doctorModel.aggregate([
-                    {
-                        $group: {
-                            _id: {
-                                $dateToString: {
-                                    format: '%Y-%m-%d',
-                                    date: '$createdAt',
-                                },
+                },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: '%Y-%m-%d',
+                                date: '$createdAt',
                             },
-                            count: { $sum: 1 },
+                        },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+            this.doctorModel.aggregate([
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: firstDayInYear,
+                            $lte: lastDayInYear,
                         },
                     },
-                ]),
-            }),
-            ...(role.userType === UserType.OPERATOR && {
-                result: await this.employeeModel.aggregate([
-                    {
-                        $group: {
-                            _id: {
-                                $dateToString: {
-                                    format: '%Y-%m-%d',
-                                    date: '$createdAt',
-                                },
+                },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: '%Y-%m-%d',
+                                date: '$createdAt',
                             },
-                            count: { $sum: 1 },
+                        },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+            this.employeeModel.aggregate([
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: firstDayInYear,
+                            $lte: lastDayInYear,
                         },
                     },
-                ]),
-            }),
-        };
+                },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: '%Y-%m-%d',
+                                date: '$createdAt',
+                            },
+                        },
+                        count: { $sum: 1 },
+                    },
+                },
+            ]),
+        ]);
+
+        const isMaxLength = max([
+            size(patients),
+            size(employees),
+            size(doctors),
+        ]);
+        for (let index = 0; index < isMaxLength; index++) {
+            const bufferPatients = resultMap.get('patients');
+            const bufferEmployee = resultMap.get('employees');
+            const bufferDoctors = resultMap.get('doctors');
+
+            const patient = patients[index];
+            const employee = employees[index];
+            const doctor = doctors[index];
+
+            !isUndefined(patient) && bufferPatients.data.push(patient.count);
+            !isUndefined(employee) && bufferEmployee.data.push(employee.count);
+            !isUndefined(doctor) && bufferDoctors.data.push(doctor.count);
+        }
+        return [...resultMap.values()];
     }
 
     async getOverviewPatients(
