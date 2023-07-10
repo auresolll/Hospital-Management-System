@@ -80,70 +80,31 @@ export class OverviewsService {
             .endOf('year')
             .toDate();
 
+        const query = [
+            {
+                $match: {
+                    createdAt: {
+                        $gte: firstDayInYear,
+                        $lte: lastDayInYear,
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: '%Y-%m-%d',
+                            date: '$createdAt',
+                        },
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+        ];
         const [patients, doctors, employees] = await Promise.all([
-            this.patientModel.aggregate([
-                {
-                    $match: {
-                        createdAt: {
-                            $gte: firstDayInYear,
-                            $lte: lastDayInYear,
-                        },
-                    },
-                },
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: '%Y-%m-%d',
-                                date: '$createdAt',
-                            },
-                        },
-                        count: { $sum: 1 },
-                    },
-                },
-            ]),
-            this.doctorModel.aggregate([
-                {
-                    $match: {
-                        createdAt: {
-                            $gte: firstDayInYear,
-                            $lte: lastDayInYear,
-                        },
-                    },
-                },
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: '%Y-%m-%d',
-                                date: '$createdAt',
-                            },
-                        },
-                        count: { $sum: 1 },
-                    },
-                },
-            ]),
-            this.employeeModel.aggregate([
-                {
-                    $match: {
-                        createdAt: {
-                            $gte: firstDayInYear,
-                            $lte: lastDayInYear,
-                        },
-                    },
-                },
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: '%Y-%m-%d',
-                                date: '$createdAt',
-                            },
-                        },
-                        count: { $sum: 1 },
-                    },
-                },
-            ]),
+            this.patientModel.aggregate(query),
+            this.doctorModel.aggregate(query),
+            this.employeeModel.aggregate(query),
         ]);
 
         const isMaxLength = max([
