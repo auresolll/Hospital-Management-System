@@ -101,18 +101,16 @@ export class OverviewsService {
                 },
             },
         ];
+
         const [patients, doctors, employees] = await Promise.all([
             this.patientModel.aggregate(query),
             this.doctorModel.aggregate(query),
             this.employeeModel.aggregate(query),
         ]);
 
-        const isMaxLength = max([
-            size(patients),
-            size(employees),
-            size(doctors),
-        ]);
-        for (let index = 0; index < isMaxLength; index++) {
+        const totalMonths = 12;
+
+        for (let index = 0; index < totalMonths; index++) {
             const bufferPatients = resultMap.get('patients');
             const bufferEmployee = resultMap.get('employees');
             const bufferDoctors = resultMap.get('doctors');
@@ -121,9 +119,15 @@ export class OverviewsService {
             const employee = employees[index];
             const doctor = doctors[index];
 
-            !isUndefined(patient) && bufferPatients.data.push(patient.count);
-            !isUndefined(employee) && bufferEmployee.data.push(employee.count);
-            !isUndefined(doctor) && bufferDoctors.data.push(doctor.count);
+            isUndefined(patient)
+                ? bufferPatients.data.push(0)
+                : bufferPatients.data.push(patient.count);
+            isUndefined(employee)
+                ? bufferEmployee.data.push(0)
+                : bufferEmployee.data.push(employee.count);
+            isUndefined(doctor)
+                ? bufferDoctors.data.push(0)
+                : bufferDoctors.data.push(doctor.count);
         }
         return [...resultMap.values()];
     }

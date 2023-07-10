@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { appSettings } from './configs/appsettings';
 import { LoggingMiddleware } from './middlewares/logging.middleware';
 import { OverviewsModule } from './apis/overviews/overviews.module';
+import { PatientModule } from './apis/patient/patient.module';
 
 @Module({
     imports: [
@@ -36,6 +37,7 @@ import { OverviewsModule } from './apis/overviews/overviews.module';
         BaseModule,
         VerifiedModule,
         OverviewsModule,
+        PatientModule,
     ],
     controllers: [AppController],
     providers: [AppService],
