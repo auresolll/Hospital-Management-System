@@ -36,7 +36,7 @@ export class OverviewsController {
     @Get('analytics-to-role')
     async findAnalyticsToRole(@Query() query: OverviewAnalyticDto) {
         const value: string = await this.cacheManager.get(
-            `analytics-to-role:${query.userType}`,
+            `analytics-to-role:${query.year}`,
         );
         if (!value) {
             const minuteMillisecond = 3 * 60 * 1000;
@@ -44,7 +44,7 @@ export class OverviewsController {
                 query,
             );
             await this.cacheManager.set(
-                `analytics-to-role:${query.userType}`,
+                `analytics-to-role:${query.year}`,
                 JSON.stringify(response),
                 minuteMillisecond,
             );
