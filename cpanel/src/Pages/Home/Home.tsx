@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { getOverviews, OverviewsAPI } from "../../Adapters/index.api";
-import AnalyticChartByRole from "../../Components/Charts/AnalyticChartByRole.lazy";
+import AnalyticChartByRole from "../../Components/Charts/AnalyticChartByRole";
 import OverviewsAnalyticChartPatient from "../../Components/Charts/OverviewsAnalyticChartPatient";
 import IconHome from "./../../Styles/assets/home.png";
 import IconScissor from "./../../Styles/assets/scissor.png";
@@ -150,14 +150,14 @@ const Home: FC<HomeProps> = () => {
                       borderRadius: 2.5,
                     },
                   },
+
                   colors: ["#00A76F", "#FFAB00", "#00B8D9"],
                   stroke: {
                     width: [2, 3, 4],
                   },
-                  legend: {
-                    position: "top",
-                    horizontalAlign: "right",
-                  },
+                  // tooltip: {
+                  //   theme: "dark",
+                  // },
                 }}
               />
             </div>

@@ -1,5 +1,4 @@
 .error-message-form {
-
     font-size: 13px;
     margin: .5em 1em;
     color: #d91b1b;
@@ -32,4 +31,8 @@ input {
 
 .apexcharts-text {
     font-weight: 600;
+}
+
+.apexcharts-tooltip {
+    color: black;
 }
