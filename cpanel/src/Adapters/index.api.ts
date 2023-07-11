@@ -23,3 +23,41 @@ export const getOverviews = async (): Promise<
 };
 
 // End API getOverviews
+
+// API getAnalyticWithRole
+
+export interface AnalyticWithRoleAPI {
+  name: string;
+  type: string;
+  fill: string;
+  data: number[];
+}
+
+export const getAnalyticWithRole = async (
+  year: number
+): Promise<ResponseOverviewsAPI<AnalyticWithRoleAPI[]>> => {
+  const request = await server.get(`overviews/analytics-to-role?year=${year}`);
+  return request.data;
+};
+
+// End API getAnalyticWithRole
+
+// API getAnalyticWithRole
+
+export interface AnalyticBaseBySemesterAPI {
+  name: string;
+  countPatients: number;
+  countDoctors: number;
+  countRoom: number;
+  countPatientDischarged: number;
+  countPatientReExamination: number;
+}
+
+export const getAnalyticBaseBySemester = async (): Promise<
+  ResponseOverviewsAPI<AnalyticBaseBySemesterAPI[]>
+> => {
+  const request = await server.get(`base/analytic/base-by-semester`);
+  return request.data;
+};
+
+// End API getAnalyticWithRole

@@ -1,6 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { getOverviews, OverviewsAPI } from "../../Adapters/index.api";
+import {
+  AnalyticBaseBySemesterAPI,
+  AnalyticWithRoleAPI,
+  OverviewsAPI,
+  getAnalyticBaseBySemester,
+  getAnalyticWithRole,
+  getOverviews,
+} from "../../Adapters/index.api";
 import AnalyticChartByRole from "../../Components/Charts/AnalyticChartByRole";
 import OverviewsAnalyticChartPatient from "../../Components/Charts/OverviewsAnalyticChartPatient";
 import IconHome from "./../../Styles/assets/home.png";
@@ -12,6 +19,10 @@ interface HomeProps {}
 
 const Home: FC<HomeProps> = () => {
   const [overviews, setOverviews] = useState<OverviewsAPI[]>([]);
+  const [analyticRole, setAnalyticRole] = useState<AnalyticWithRoleAPI[]>([]);
+  const [analyticBaseBySemester, setAnalyticBaseBySemester] = useState<
+    AnalyticBaseBySemesterAPI[]
+  >([]);
   const series = [
     {
       name: "Bác sĩ",
@@ -32,9 +43,17 @@ const Home: FC<HomeProps> = () => {
       data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 5],
     },
   ];
+
   const seriesPatients = [44, 55, 67, 83];
   useEffect(() => {
+    const currentYear = new Date().getFullYear();
     getOverviews().then((value) => setOverviews(value.data));
+    getAnalyticWithRole(currentYear).then((value) =>
+      setAnalyticRole(value.data)
+    );
+    getAnalyticBaseBySemester().then((value) =>
+      setAnalyticBaseBySemester(value.data)
+    );
   }, []);
 
   useEffect(() => {
@@ -128,7 +147,7 @@ const Home: FC<HomeProps> = () => {
 
             <div className={styles.Home__Analytics__Role__Visual}>
               <AnalyticChartByRole
-                chartData={series}
+                chartData={series || analyticRole}
                 chartLabels={[
                   "2023-01-01",
                   "2023-02-01",
@@ -155,9 +174,9 @@ const Home: FC<HomeProps> = () => {
                   stroke: {
                     width: [2, 3, 4],
                   },
-                  // tooltip: {
-                  //   theme: "dark",
-                  // },
+                  tooltip: {
+                    theme: "dark",
+                  },
                 }}
               />
             </div>
@@ -231,35 +250,29 @@ const Home: FC<HomeProps> = () => {
             <p>Thống kê cơ sở</p>
           </div>
 
-          <p className={styles.Home__Table__Title}>
-            Quý 1 năm 2023 (T01 - T04)
-          </p>
-
           <table className={styles.Home__Table__Container}>
-            <tr>
-              <th>Tên cơ sở</th>
-              <th>Số lượng bệnh nhân</th>
-              <th>Số lượng bác sĩ</th>
-              <th>Số lượng phòng bệnh</th>
-              <th>Số lượng xuất viện</th>
-              <th>Số lượng tái khám</th>
-            </tr>
-            <tr>
-              <td>HCM</td>
-              <td>6121</td>
-              <td>6121</td>
-              <td>6121</td>
-              <td>6121</td>
-              <td>6121</td>
-            </tr>
-            <tr>
-              <td>HCM</td>
-              <td>6121</td>
-              <td>6121</td>
-              <td>6121</td>
-              <td>6121</td>
-              <td>6121</td>
-            </tr>
+            <thead>
+              <tr>
+                <th>Tên cơ sở</th>
+                <th>Số lượng bệnh nhân</th>
+                <th>Số lượng bác sĩ</th>
+                <th>Số lượng phòng bệnh</th>
+                <th>Số lượng xuất viện</th>
+                <th>Số lượng tái khám</th>
+              </tr>
+            </thead>
+            <tbody>
+              {analyticBaseBySemester.map((item) => (
+                <tr>
+                  <td>{item.name}</td>
+                  <td>{item.countPatients}</td>
+                  <td>{item.countDoctors}</td>
+                  <td>{item.countRoom}</td>
+                  <td>{item.countPatientDischarged}</td>
+                  <td>{item.countPatientReExamination}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </section>
       </div>
