@@ -23,6 +23,11 @@ export class BaseService {
         return this.baseModel.find();
     }
 
+    /**
+     * Used Map object to store data: [KEY: VALUE] => [HCM: Object]
+     * Get the correct Key depend field in the model and handle data
+     * @returns Object container query information.
+     */
     async getAnalyticBaseBySemester() {
         const [baseList, patientList, doctorList, roomList] = await Promise.all(
             [
