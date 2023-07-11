@@ -32,7 +32,7 @@ export class OverviewsController {
         return JSON.parse(value);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('analytics-to-role')
     async findAnalyticsToRole(@Query() query: OverviewAnalyticDto) {
         const value: string = await this.cacheManager.get(

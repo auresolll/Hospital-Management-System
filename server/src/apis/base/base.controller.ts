@@ -1,5 +1,7 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Controller, Get, Inject, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Cache } from 'cache-manager';
 import { JwtAuthGuard } from './../../guards/jwt-auth.guard';
 import { BaseService } from './base.service';
 
@@ -7,7 +9,10 @@ import { BaseService } from './base.service';
 @ApiBearerAuth()
 @Controller('base')
 export class BaseController {
-    constructor(private readonly baseService: BaseService) {}
+    constructor(
+        private readonly baseService: BaseService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    ) {}
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -17,7 +22,20 @@ export class BaseController {
 
     @UseGuards(JwtAuthGuard)
     @Get('analytic/base-by-semester')
-    findAnalyticBaseBySemester() {
-        return this.baseService.getAnalyticBaseBySemester();
+    async findAnalyticBaseBySemester() {
+        const value: string = await this.cacheManager.get(
+            `analytic/base-by-semester`,
+        );
+        if (!value) {
+            const minuteMillisecond = 3 * 60 * 1000;
+            const response = await this.baseService.getAnalyticBaseBySemester();
+            await this.cacheManager.set(
+                `analytic/base-by-semester`,
+                JSON.stringify(response),
+                minuteMillisecond,
+            );
+            return response;
+        }
+        return JSON.parse(value);
     }
 }
