@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { PatientType } from './../../constants/enums';
 import { Doctor } from './Doctor.entity';
 import { Hospital } from './Hospital.entity';
 import { User } from './User.entity';
@@ -17,6 +18,9 @@ export class Patient {
 
     @Prop({ required: false })
     weight: number;
+
+    @Prop({ required: true, enum: PatientType })
+    category: PatientType;
 
     @Prop({ required: false })
     height: number;

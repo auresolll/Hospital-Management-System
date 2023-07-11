@@ -3,16 +3,11 @@ export enum Status {
     ACTIVE = 'ACTIVE',
 }
 
-// export enum PatientType {
-//     CHECKUP = 'CHECKUP',
-//     REEXAMINATION = 'RE-EXAMINATION',
-//     EMERGENCY = 'EMERGENCY',
-//     SURGICAL = 'SURGICAL',
-// }
-
-export enum PatientTest {
+export enum PatientType {
     CHECKUP = 'CHECKUP',
-    RE_EXAMINATION = 'RE_EXAMINATION',
+    RE_EXAMINATION = 'RE-EXAMINATION',
+    EMERGENCY = 'EMERGENCY',
+    SURGICAL = 'SURGICAL',
 }
 
 export enum RoomType {
