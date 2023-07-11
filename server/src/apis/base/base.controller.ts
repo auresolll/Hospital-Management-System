@@ -14,4 +14,10 @@ export class BaseController {
     findAllBase() {
         return this.baseService.getAll();
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('analytic/base-by-semester')
+    findAnalyticBaseBySemester() {
+        return this.baseService.getAnalyticBaseBySemester();
+    }
 }

@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { PatientTest } from './../../constants/enums';
 import { TestPrice } from './TestPrice.entity';
+import { Patient } from './Patient.entity';
 
 @Schema({ timestamps: true })
 export class Lab {
+    @Prop({ type: Types.ObjectId, ref: Patient.name })
+    patient: Patient;
+
     @Prop({ required: true })
     weight: string;
 
@@ -22,9 +25,6 @@ export class Lab {
 
     @Prop({ required: true })
     category: string;
-
-    @Prop({ required: true, enum: PatientTest })
-    parent_type: PatientTest;
 
     @Prop({ required: true })
     test_result: string;
