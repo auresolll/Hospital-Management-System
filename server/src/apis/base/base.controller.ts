@@ -19,23 +19,4 @@ export class BaseController {
     findAllBase() {
         return this.baseService.getAll();
     }
-
-    @UseGuards(JwtAuthGuard)
-    @Get('analytic/base-by-semester')
-    async findAnalyticBaseBySemester() {
-        const value: string = await this.cacheManager.get(
-            `analytic/base-by-semester`,
-        );
-        if (!value) {
-            const minuteMillisecond = 3 * 60 * 1000;
-            const response = await this.baseService.getAnalyticBaseBySemester();
-            await this.cacheManager.set(
-                `analytic/base-by-semester`,
-                JSON.stringify(response),
-                minuteMillisecond,
-            );
-            return response;
-        }
-        return JSON.parse(value);
-    }
 }
