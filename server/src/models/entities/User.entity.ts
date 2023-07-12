@@ -32,9 +32,6 @@ export class User {
     @Prop({ required: false })
     password: string;
 
-    @Prop({ type: Types.ObjectId, ref: Base.name })
-    base: Base;
-
     @Prop({ type: Types.ObjectId, ref: Role.name })
     role: Role;
 

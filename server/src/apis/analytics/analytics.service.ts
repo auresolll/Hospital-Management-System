@@ -1,31 +1,31 @@
-import { Employee } from './../../models/entities/Employee.entity';
-import { Doctor } from './../../models/entities/Doctor.entity';
-import {
-    BadRequestException,
-    ForbiddenException,
-    Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { isUndefined, max, size } from 'lodash';
 import moment from 'moment';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
+import { PatientType } from './../../constants/enums';
+import { Base } from './../../models/entities/Base.entity';
+import { Doctor } from './../../models/entities/Doctor.entity';
+import { Employee } from './../../models/entities/Employee.entity';
 import { Inpatient } from './../../models/entities/Inpatient.entity';
 import { Lab } from './../../models/entities/Lab.entity';
 import { Patient } from './../../models/entities/Patient.entity';
-import { OverviewAnalyticDto } from './dto/overviews.dto';
-import { UserType } from './../../constants/enums';
-import { isUndefined, max, size } from 'lodash';
+import { Room } from './../../models/entities/Room.entity';
+import { OverviewAnalyticDto } from './dto/analytics.dto';
 
 @Injectable()
-export class OverviewsService {
+export class AnalyticsService {
     constructor(
         @InjectModel(Patient.name) private patientModel: Model<Patient>,
+        @InjectModel(Room.name) private roomModel: Model<Room>,
+        @InjectModel(Base.name) private baseModel: Model<Base>,
         @InjectModel(Inpatient.name) private inPatientModel: Model<Inpatient>,
         @InjectModel(Doctor.name) private doctorModel: Model<Doctor>,
         @InjectModel(Employee.name) private employeeModel: Model<Employee>,
         @InjectModel(Lab.name) private labModel: Model<Lab>,
     ) {}
 
-    async getOverviews() {
+    async getAnalyticOverviews() {
         const currentDay = moment();
         const previousSecondDay = moment().subtract(15, 'days');
         const previousThirdDay = moment().subtract(30, 'days');
@@ -132,6 +132,67 @@ export class OverviewsService {
         return [...resultMap.values()];
     }
 
+    async getAnalyticBaseBySemester() {
+        const [baseList, patientList, doctorList, roomList] = await Promise.all(
+            [
+                this.baseModel.find(),
+                this.patientModel.find().populate('hospital'),
+                this.doctorModel.find().populate('hospital'),
+                this.roomModel.find(),
+            ],
+        );
+
+        const resultBuffer = new Map();
+        baseList.map((base) => {
+            // Example: [HCM: 1] => [HCM: 2] => [HCM: 3]
+            resultBuffer.set(String(base.id), {
+                name: base.name,
+                countPatients: 0,
+                countDoctors: 0,
+                countRoom: 0,
+                countPatientDischarged: 0,
+                countPatientReExamination: 0,
+            });
+        });
+
+        const maxLength = max([size(patientList), size(doctorList)]);
+
+        for (let index = 0; index < maxLength; index++) {
+            const patient = patientList[index];
+            const doctor = doctorList[index];
+            const room = roomList[index];
+
+            if (!isUndefined(patient)) {
+                const baseID = String(patient.hospital.base);
+                const result = resultBuffer.get(baseID);
+                result.countPatients++;
+                switch (patient.category) {
+                    case PatientType.RE_EXAMINATION:
+                        result.countPatientReExamination++;
+                        break;
+                    case PatientType.CHECKUP:
+                        result.countPatientDischarged++;
+                        break;
+                }
+            }
+
+            if (!isUndefined(doctor)) {
+                // Example: baseID = HCM => get object HCM and update count doctors
+                const baseID = String(doctor.hospital.base);
+                const result = resultBuffer.get(baseID);
+                result.countDoctors++;
+            }
+
+            if (!isUndefined(room)) {
+                const baseID = String(room.base);
+                const result = resultBuffer.get(baseID);
+                result.countRoom++;
+            }
+        }
+
+        return [...resultBuffer.values()];
+    }
+
     async getOverviewPatients(
         currentDay: moment.Moment,
         previousSecondDay: moment.Moment,
@@ -170,6 +231,50 @@ export class OverviewsService {
                 type: 'Patient',
             };
         });
+    }
+
+    async getAnalyticsPatientsWithBase(options: OverviewAnalyticDto) {
+        const bufferBase = new Map();
+        const bufferResult = new Map();
+        bufferResult.set('result', {
+            base: [],
+            data: [],
+        });
+        const firstDayInYear = moment()
+            .year(options.year)
+            .startOf('year')
+            .toDate();
+        const lastDayInYear = moment()
+            .year(options.year)
+            .endOf('year')
+            .toDate();
+
+        const [bases, patients] = await Promise.all([
+            this.baseModel.find().select(['_id', 'name']),
+            this.patientModel
+                .find({
+                    createdAt: {
+                        $gte: firstDayInYear,
+                        $lte: lastDayInYear,
+                    },
+                })
+                .populate('hospital')
+                .select(['_id', 'hospital']),
+        ]);
+
+        bases.map((base) => {
+            bufferBase.set(String(base.id), 0);
+            bufferResult.get('result').base.push(base.name);
+            bufferResult.get('result').data.push(0);
+        });
+
+        patients.map((patient) => {
+            const base = bufferBase.get(String(patient.hospital.base));
+            bufferBase.set(String(patient.hospital.base), base + 1);
+        });
+
+        bufferResult.get('result').data = [...bufferBase.values()];
+        return bufferResult.get('result');
     }
 
     async getOverviewInPatients(

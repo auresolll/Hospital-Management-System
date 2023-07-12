@@ -5,7 +5,7 @@ import { User } from './User.entity';
 
 @Schema({ timestamps: true })
 export class Base {
-    @Prop({ type: Types.ObjectId, ref: 'User' })
+    @Prop({ type: Types.ObjectId, ref: User.name })
     manager: User;
 
     @Prop({ required: true })
