@@ -1,72 +1,53 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import compression from 'compression';
-import MongoStore from 'connect-mongo';
-import session from 'express-session';
-import { isEqual } from 'lodash';
-import passport from 'passport';
-import { AppModule } from './app.module';
-import { appSettings } from './configs/appsettings';
-import { LoggingInterceptor } from './interceptors/logging.interceptor';
-import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import * as compression from "compression";
+import * as cookieParser from "cookie-parser";
+import helmet from "helmet";
+import * as path from "path";
+import { AppModule } from "./app/app.module";
+import { ExceptionsFilter } from "./core/filter/exceptions.filter";
+import { environments } from "./environments/environments";
+import { TransformInterceptor } from "./shared/interception/transform.interceptor";
+import swaggerInit from "./swagger";
+
+export const urlPublic = path.resolve(__dirname, "..", "public");
 
 async function bootstrap() {
-    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // const logging = new Logging();
 
-    app.enableCors();
+  // app.use(
+  //   compression({
+  //     level: 6,
+  //     threshold: 100 * 1000,
+  //   })
+  // );
+  app.use(helmet());
+  app.use(cookieParser());
+  app.useGlobalInterceptors(
+    // new LoggingInterceptor(logging),
+    new TransformInterceptor()
+  );
 
-    // Init Login interceptor
-    app.useGlobalInterceptors(
-        new LoggingInterceptor(),
-        new TransformInterceptor(),
-    );
+  app.useGlobalFilters(new ExceptionsFilter());
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: false }));
+  app.useStaticAssets(path.resolve("public"));
 
-    const mongoUrl = `${appSettings.mongoose.dbConn}/${appSettings.mongoose.dbName}?authSource=admin`;
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
 
-    const refreshTokenExpireMillisecond =
-        appSettings.jwt.refreshExpireIn * 1000;
-    const minuteMillisecond = 60 * 1000;
-    app.use(
-        session({
-            store: new MongoStore({ mongoUrl: mongoUrl }),
-            secret: appSettings.oidc.sessionSecret,
-            resave: false,
-            saveUninitialized: false,
-            rolling: true,
-            cookie: {
-                maxAge: refreshTokenExpireMillisecond + minuteMillisecond,
-                httpOnly: true,
-            },
-        }),
-    );
+  app.enableShutdownHooks();
 
-    app.use(
-        compression({
-            level: 6,
-            threshold: 100 * 1000,
-        }),
-    );
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.useGlobalPipes(
-        new ValidationPipe({ transform: true, whitelist: false }), // temp
-    );
+  const PORT = environments.port;
 
-    if (isEqual(process.env.DEVELOPMENT, 'true')) {
-        const config = new DocumentBuilder()
-            .setTitle('Hospital Management Server')
-            .setDescription('The Hospital API description')
-            .setVersion('1.0')
-            .addBearerAuth()
-            .build();
+  await swaggerInit(app);
 
-        const document = SwaggerModule.createDocument(app, config);
-        SwaggerModule.setup('docs', app, document);
-    }
-
-    console.log(`Application running at http://localhost:${appSettings.port}`);
-    await app.listen(appSettings.port);
+  await app.listen(PORT, () => {
+    // logging.debug(`Server đang chạy trên PORT ${PORT}`);
+  });
 }
 bootstrap();
